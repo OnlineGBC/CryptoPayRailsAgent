@@ -4,542 +4,576 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Codex PayRails Agent</title>
 
 <style>
 
 /* ---------- GLOBAL ---------- */
-
-body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-margin:0;
-background:linear-gradient(180deg,#030712,#020617);
-color:#e5e7eb;
-display:flex;
-}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;margin:0;background:linear-gradient(180deg,#030712,#020617);color:#e5e7eb;display:flex;}
 
 /* ---------- SIDEBAR ---------- */
-
-.sidebar{
-width:250px;
-background:#020617;
-border-right:1px solid #1e293b;
-min-height:100vh;
-padding:20px;
-}
-
-.brand{
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:25px;
-}
-
-.brand-logo{
-width:36px;
-height:36px;
-border-radius:10px;
-background:linear-gradient(135deg,#10b981,#059669);
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-font-weight:700;
-}
-
-.nav a{
-display:block;
-padding:10px 14px;
-margin:6px 0;
-border-radius:10px;
-text-decoration:none;
-color:#94a3b8;
-}
-
-.nav a.active{
-background:linear-gradient(135deg,#10b981,#047857);
-color:white;
-}
-
-.nav a:hover{
-background:#111827;
-color:white;
-}
+.sidebar{width:250px;background:#020617;border-right:1px solid #1e293b;min-height:100vh;padding:20px;box-sizing:border-box;flex-shrink:0;}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:25px;}
+.brand-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;}
+.nav a{display:block;padding:10px 14px;margin:6px 0;border-radius:10px;text-decoration:none;color:#94a3b8;cursor:pointer;}
+.nav a.active{background:linear-gradient(135deg,#10b981,#047857);color:white;}
+.nav a:hover:not(.active){background:#111827;color:white;}
 
 /* ---------- MAIN ---------- */
+.main{flex:1;padding:30px;overflow-y:auto;}
 
-.main{
-flex:1;
-padding:30px;
-}
+/* ---------- SECTIONS ---------- */
+.section{display:none;}
+.section.active{display:block;}
 
 /* ---------- TOP BAR ---------- */
-
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:25px;
-}
-
-.wallet-btn{
-background:linear-gradient(135deg,#10b981,#047857);
-border:none;
-padding:10px 16px;
-border-radius:10px;
-color:white;
-font-weight:600;
-cursor:pointer;
-}
-
-.pill{
-padding:6px 12px;
-border-radius:20px;
-border:1px solid #1e293b;
-color:#94a3b8;
-font-size:13px;
-}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+.wallet-btn{background:linear-gradient(135deg,#10b981,#047857);border:none;padding:10px 16px;border-radius:10px;color:white;font-weight:600;cursor:pointer;}
+.pill{padding:6px 12px;border-radius:20px;border:1px solid #1e293b;color:#94a3b8;font-size:13px;}
 
 /* ---------- KPI CARDS ---------- */
-
-.cards{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:16px;
-margin-bottom:25px;
-}
-
-.kpi{
-background:linear-gradient(135deg,#10b981,#047857);
-border-radius:16px;
-padding:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.5);
-}
-
-.kpi-label{
-font-size:12px;
-opacity:.8;
-}
-
-.kpi-value{
-font-size:28px;
-font-weight:700;
-margin-top:8px;
-}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:25px;}
+.kpi{background:linear-gradient(135deg,#10b981,#047857);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.5);}
+.kpi-label{font-size:12px;opacity:.8;}
+.kpi-value{font-size:28px;font-weight:700;margin-top:8px;}
 
 /* ---------- PANELS ---------- */
-
-.panel{
-background:#020617;
-border-radius:18px;
-border:1px solid #1e293b;
-padding:20px;
-margin-bottom:20px;
-}
+.panel{background:#020617;border-radius:18px;border:1px solid #1e293b;padding:20px;margin-bottom:20px;}
+h3{margin-top:0;}
 
 /* ---------- CHART ---------- */
-
-.chart{
-display:flex;
-align-items:flex-end;
-gap:12px;
-height:200px;
-margin-top:20px;
-}
-
-.bar{
-width:40px;
-background:linear-gradient(180deg,#34d399,#10b981,#047857);
-border-radius:10px 10px 6px 6px;
-}
-
-.bar-label{
-font-size:12px;
-text-align:center;
-margin-top:6px;
-color:#94a3b8;
-}
+.chart{display:flex;align-items:flex-end;gap:12px;height:200px;margin-top:20px;}
+.bar{width:40px;background:linear-gradient(180deg,#34d399,#10b981,#047857);border-radius:10px 10px 6px 6px;}
+.bar-label{font-size:12px;text-align:center;margin-top:6px;color:#94a3b8;}
 
 /* ---------- TABLE ---------- */
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th{
-text-align:left;
-font-size:12px;
-color:#94a3b8;
-padding:12px;
-}
-
-td{
-padding:12px;
-border-top:1px solid #1e293b;
-}
-
-.badge{
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
-}
-
-.success{
-background:#065f46;
-color:#6ee7b7;
-}
-
-.pending{
-background:#78350f;
-color:#fcd34d;
-}
-
-.failed{
-background:#7f1d1d;
-color:#fecaca;
-}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:12px;color:#94a3b8;padding:12px;}
+td{padding:12px;border-top:1px solid #1e293b;font-size:14px;}
+.badge{padding:5px 10px;border-radius:20px;font-size:12px;}
+.completed{background:#065f46;color:#6ee7b7;}
+.pending{background:#78350f;color:#fcd34d;}
+.declined{background:#7f1d1d;color:#fecaca;}
 
 /* ---------- FORM ---------- */
-
-input,select{
-width:100%;
-padding:10px;
-margin-top:6px;
-border-radius:10px;
-border:1px solid #1e293b;
-background:#030712;
-color:white;
-}
-
-button.primary{
-background:linear-gradient(135deg,#10b981,#047857);
-border:none;
-padding:10px 16px;
-border-radius:10px;
-color:white;
-margin-top:10px;
-cursor:pointer;
-}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.form-full{grid-column:1/-1;}
+label{font-size:12px;color:#94a3b8;display:block;margin-bottom:4px;}
+input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #1e293b;background:#030712;color:white;box-sizing:border-box;}
+textarea{resize:vertical;min-height:80px;}
+button.primary{background:linear-gradient(135deg,#10b981,#047857);border:none;padding:10px 20px;border-radius:10px;color:white;margin-top:12px;cursor:pointer;font-size:14px;font-weight:600;}
+button.secondary{background:transparent;border:1px solid #1e293b;padding:10px 20px;border-radius:10px;color:#94a3b8;margin-top:12px;cursor:pointer;font-size:14px;}
 
 /* ---------- ACTIVITY ---------- */
+.activity{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1e293b;font-size:14px;}
 
-.activity{
-display:flex;
-justify-content:space-between;
-padding:10px 0;
-border-bottom:1px solid #1e293b;
-font-size:14px;
-}
+/* ---------- STATUS CARDS ---------- */
+.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px;}
+.status-card{background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:16px;}
+.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px;}
+.dot-green{background:#10b981;}
+.dot-yellow{background:#f59e0b;}
+.dot-red{background:#ef4444;}
+
+/* ---------- EMPTY STATE ---------- */
+.empty{text-align:center;padding:40px;color:#475569;}
+.empty-icon{font-size:40px;margin-bottom:12px;}
 
 </style>
 </head>
 
 <body>
 
+<!-- ===================== SIDEBAR ===================== -->
+
 <div class="sidebar">
 
 <div class="brand">
 <div class="brand-logo">C</div>
-<div>
-<strong>Codex PayRails</strong><br>
-<small>AI payment operations</small>
-</div>
+<div><strong>Codex PayRails</strong><br><small style="color:#64748b;">AI payment operations</small></div>
 </div>
 
 <div class="nav">
-<a class="active">Dashboard</a>
-<a>Policies</a>
-<a>Payments</a>
-<a>Agents</a>
-<a>Transactions</a>
-<a>Analytics</a>
-<a>Wallets</a>
-<a>Settings</a>
+<a onclick="navigate('dashboard')" data-section="dashboard" class="active">Dashboard</a>
+<a onclick="navigate('policies')" data-section="policies">Policies</a>
+<a onclick="navigate('payments')" data-section="payments">Payments</a>
+<a onclick="navigate('agents')" data-section="agents">Agents</a>
+<a onclick="navigate('transactions')" data-section="transactions">Transactions</a>
+<a onclick="navigate('analytics')" data-section="analytics">Analytics</a>
+<a onclick="navigate('wallets')" data-section="wallets">Wallets</a>
+<a onclick="navigate('settings')" data-section="settings">Settings</a>
 </div>
 
 </div>
+
+<!-- ===================== MAIN ===================== -->
 
 <div class="main">
 
+<!-- TOP BAR (always visible) -->
 <div class="topbar">
-
 <div>
-<h2>Payment Control Dashboard</h2>
-<p style="color:#94a3b8;">Professional control plane for AI-managed payments</p>
+<h2 id="pageTitle" style="margin:0;">Payment Control Dashboard</h2>
+<p style="color:#94a3b8;margin:4px 0 0;">Professional control plane for AI-managed payments</p>
 </div>
-
 <div style="display:flex;gap:10px;align-items:center;">
 <div class="pill">System healthy</div>
 <div class="pill" id="walletStatus">Wallet not connected</div>
 <button class="wallet-btn" onclick="connectWallet()">Connect Wallet</button>
 </div>
-
 </div>
 
-<!-- KPI -->
+<!-- ===== SECTION: DASHBOARD ===== -->
+<div class="section active" id="sec-dashboard">
 
 <div class="cards">
-
-<div class="kpi">
-<div class="kpi-label">POLICIES CREATED</div>
-<div class="kpi-value" id="policyCount">0</div>
+<div class="kpi"><div class="kpi-label">POLICIES CREATED</div><div class="kpi-value" id="policyCount">0</div></div>
+<div class="kpi"><div class="kpi-label">PAYMENTS EXECUTED</div><div class="kpi-value" id="paymentCount">0</div></div>
+<div class="kpi"><div class="kpi-label">MONTHLY VOLUME</div><div class="kpi-value" id="volumeValue">$0</div></div>
+<div class="kpi"><div class="kpi-label">APPROVAL RATE</div><div class="kpi-value" id="approvalRate">96%</div></div>
 </div>
-
-<div class="kpi">
-<div class="kpi-label">PAYMENTS EXECUTED</div>
-<div class="kpi-value" id="paymentCount">0</div>
-</div>
-
-<div class="kpi">
-<div class="kpi-label">MONTHLY VOLUME</div>
-<div class="kpi-value" id="volumeValue">$0</div>
-</div>
-
-<div class="kpi">
-<div class="kpi-label">APPROVAL RATE</div>
-<div class="kpi-value" id="approvalRate">96%</div>
-</div>
-
-</div>
-
-<!-- CHART -->
 
 <div class="panel">
-
 <h3>Payments Overview</h3>
-
 <div class="chart" id="chart"></div>
-
 </div>
 
-<!-- TABLE -->
-
 <div class="panel">
-
-<h3>Transactions</h3>
-
+<h3>Recent Transactions</h3>
 <table>
-
-<thead>
-<tr>
-<th>Transaction</th>
-<th>Recipient</th>
-<th>Policy</th>
-<th>Amount</th>
-<th>Status</th>
-<th>Network</th>
-</tr>
-</thead>
-
-<tbody id="txTable"></tbody>
-
+<thead><tr><th>Transaction</th><th>Recipient</th><th>Policy</th><th>Amount</th><th>Status</th><th>Network</th></tr></thead>
+<tbody id="txTableDash"></tbody>
 </table>
-
 </div>
 
-<!-- ACTIVITY -->
-
 <div class="panel">
-
 <h3>Recent Activity</h3>
-
 <div id="activityList"></div>
+</div>
 
 </div>
 
-<!-- POLICY CREATION -->
+<!-- ===== SECTION: POLICIES ===== -->
+<div class="section" id="sec-policies">
 
 <div class="panel">
+<h3>Active Policies</h3>
+<table>
+<thead><tr><th>Policy ID</th><th>Agent</th><th>Token</th><th>Budget</th><th>Purpose</th><th>Tx Hash</th></tr></thead>
+<tbody id="policyTable"></tbody>
+</table>
+<div id="policyTableEmpty" class="empty" style="display:none;">
+<div class="empty-icon">📋</div>
+<div>No policies yet. Create one below.</div>
+</div>
+</div>
 
+<div class="panel">
 <h3>Create Payment Policy</h3>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
-
-<div>
-<label style="font-size:12px;color:#94a3b8;">Agent Address</label>
-<input id="f_agent" type="text" placeholder="0xAgentAddress">
+<div class="form-grid">
+<div><label>Agent Address</label><input id="f_agent" type="text" placeholder="0xAgentAddress"></div>
+<div><label>Token</label>
+<select id="f_token"><option value="ETH">ETH</option><option value="USDC">USDC</option><option value="DAI">DAI</option></select>
 </div>
-
-<div>
-<label style="font-size:12px;color:#94a3b8;">Token</label>
-<select id="f_token">
-<option value="ETH">ETH</option>
-<option value="USDC">USDC</option>
-<option value="DAI">DAI</option>
-</select>
+<div><label>Total Budget (USD)</label><input id="f_budget" type="number" placeholder="10000"></div>
+<div><label>Per-Tx Limit (USD)</label><input id="f_perTx" type="number" placeholder="500"></div>
+<div><label>Valid From (Unix timestamp)</label><input id="f_validFrom" type="number" placeholder="1700000000"></div>
+<div><label>Valid Until (Unix timestamp)</label><input id="f_validUntil" type="number" placeholder="1800000000"></div>
+<div class="form-full"><label>Purpose</label><input id="f_purpose" type="text" placeholder="e.g. SaaS vendor payments"></div>
 </div>
-
-<div>
-<label style="font-size:12px;color:#94a3b8;">Total Budget (USD)</label>
-<input id="f_budget" type="number" placeholder="10000">
-</div>
-
-<div>
-<label style="font-size:12px;color:#94a3b8;">Per-Tx Limit (USD)</label>
-<input id="f_perTx" type="number" placeholder="500">
-</div>
-
-<div>
-<label style="font-size:12px;color:#94a3b8;">Valid From (Unix timestamp)</label>
-<input id="f_validFrom" type="number" placeholder="1700000000">
-</div>
-
-<div>
-<label style="font-size:12px;color:#94a3b8;">Valid Until (Unix timestamp)</label>
-<input id="f_validUntil" type="number" placeholder="1800000000">
-</div>
-
-<div style="grid-column:1/-1;">
-<label style="font-size:12px;color:#94a3b8;">Purpose</label>
-<input id="f_purpose" type="text" placeholder="e.g. SaaS vendor payments">
-</div>
-
-</div>
-
 <button class="primary" onclick="createPolicy()">Deploy Policy</button>
-
 <div id="policyResult" style="margin-top:10px;font-size:13px;color:#34d399;"></div>
+</div>
 
 </div>
 
-<!-- AI PAYMENT INTENT -->
+<!-- ===== SECTION: PAYMENTS ===== -->
+<div class="section" id="sec-payments">
 
 <div class="panel">
-
 <h3>AI Payment Intent</h3>
-
-<div style="margin-top:16px;">
-<label style="font-size:12px;color:#94a3b8;">Describe the payment task</label>
-<input id="f_task" type="text" placeholder="Pay $200 to AWS for cloud hosting">
+<p style="color:#94a3b8;font-size:14px;">Describe a payment task in plain English and the AI will generate a structured payment intent.</p>
+<div class="form-grid">
+<div class="form-full">
+<label>Payment Task Description</label>
+<textarea id="f_task" placeholder="e.g. Pay $200 to AWS for cloud hosting this month"></textarea>
 </div>
-
+</div>
 <button class="primary" onclick="generateIntent()">Generate Intent</button>
-
 <pre id="intentResult" style="margin-top:12px;background:#030712;border:1px solid #1e293b;border-radius:10px;padding:12px;font-size:13px;color:#34d399;white-space:pre-wrap;display:none;"></pre>
+</div>
 
+<div class="panel">
+<h3>Payment History</h3>
+<table>
+<thead><tr><th>Transaction</th><th>Recipient</th><th>Policy</th><th>Amount</th><th>Status</th><th>Network</th></tr></thead>
+<tbody id="txTablePayments"></tbody>
+</table>
 </div>
 
 </div>
+
+<!-- ===== SECTION: AGENTS ===== -->
+<div class="section" id="sec-agents">
+
+<div class="panel">
+<h3>Agent Registry</h3>
+<div class="status-grid" id="agentGrid">
+<div class="status-card">
+<div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">AGENT-001</div>
+<div style="font-weight:600;margin-bottom:6px;">SaaS Payments Agent</div>
+<div><span class="status-dot dot-green"></span><span style="font-size:13px;color:#10b981;">Active</span></div>
+<div style="margin-top:8px;font-size:12px;color:#64748b;">Budget: $10,000 · Used: $1,200</div>
+</div>
+<div class="status-card">
+<div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">AGENT-002</div>
+<div style="font-weight:600;margin-bottom:6px;">Infrastructure Agent</div>
+<div><span class="status-dot dot-yellow"></span><span style="font-size:13px;color:#f59e0b;">Pending</span></div>
+<div style="margin-top:8px;font-size:12px;color:#64748b;">Budget: $5,000 · Used: $0</div>
+</div>
+<div class="status-card">
+<div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">AGENT-003</div>
+<div style="font-weight:600;margin-bottom:6px;">Vendor Payment Agent</div>
+<div><span class="status-dot dot-green"></span><span style="font-size:13px;color:#10b981;">Active</span></div>
+<div style="margin-top:8px;font-size:12px;color:#64748b;">Budget: $25,000 · Used: $8,400</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3>Agent Activity Log</h3>
+<div id="agentActivity">
+<div class="activity"><div>AGENT-001 executed payment to AWS</div><div style="color:#64748b;">12:04:22 UTC</div></div>
+<div class="activity"><div>AGENT-003 executed payment to Stripe</div><div style="color:#64748b;">11:58:10 UTC</div></div>
+<div class="activity"><div>AGENT-002 policy validation pending</div><div style="color:#64748b;">11:45:00 UTC</div></div>
+</div>
+</div>
+
+</div>
+
+<!-- ===== SECTION: TRANSACTIONS ===== -->
+<div class="section" id="sec-transactions">
+
+<div class="panel">
+<h3>All Transactions</h3>
+<table>
+<thead><tr><th>Transaction</th><th>Recipient</th><th>Policy</th><th>Amount</th><th>Status</th><th>Network Hash</th></tr></thead>
+<tbody id="txTableFull"></tbody>
+</table>
+<div id="txEmpty" class="empty" style="display:none;">
+<div class="empty-icon">💳</div>
+<div>No transactions yet.</div>
+</div>
+</div>
+
+</div>
+
+<!-- ===== SECTION: ANALYTICS ===== -->
+<div class="section" id="sec-analytics">
+
+<div class="cards">
+<div class="kpi"><div class="kpi-label">TOTAL VOLUME</div><div class="kpi-value" id="analyticsVolume">$0</div></div>
+<div class="kpi"><div class="kpi-label">AVG TX SIZE</div><div class="kpi-value" id="analyticsAvg">$0</div></div>
+<div class="kpi"><div class="kpi-label">APPROVAL RATE</div><div class="kpi-value" id="analyticsApproval">96%</div></div>
+<div class="kpi"><div class="kpi-label">ACTIVE POLICIES</div><div class="kpi-value" id="analyticsPolicies">0</div></div>
+</div>
+
+<div class="panel">
+<h3>Weekly Payment Volume</h3>
+<div class="chart" id="analyticsChart"></div>
+</div>
+
+<div class="panel">
+<h3>Transaction Status Breakdown</h3>
+<div id="statusBreakdown" style="margin-top:16px;"></div>
+</div>
+
+</div>
+
+<!-- ===== SECTION: WALLETS ===== -->
+<div class="section" id="sec-wallets">
+
+<div class="panel">
+<h3>Wallet Connection</h3>
+<div id="walletInfo" style="margin-top:16px;">
+<div style="display:flex;align-items:center;gap:16px;padding:20px;background:#0f172a;border-radius:14px;border:1px solid #1e293b;">
+<div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#10b981,#047857);display:flex;align-items:center;justify-content:center;font-size:24px;">👛</div>
+<div>
+<div id="walletAddress" style="font-weight:600;">Not connected</div>
+<div id="walletConnState" style="font-size:13px;color:#64748b;margin-top:4px;">Connect a wallet to enable on-chain policy deployment</div>
+</div>
+<button class="primary" onclick="connectWallet()" style="margin-top:0;margin-left:auto;">Connect Wallet</button>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3>Supported Networks</h3>
+<div class="status-grid">
+<div class="status-card"><div style="font-weight:600;margin-bottom:6px;">Ethereum Mainnet</div><div><span class="status-dot dot-green"></span><span style="font-size:13px;color:#10b981;">Supported</span></div></div>
+<div class="status-card"><div style="font-weight:600;margin-bottom:6px;">Sepolia Testnet</div><div><span class="status-dot dot-green"></span><span style="font-size:13px;color:#10b981;">Supported</span></div></div>
+<div class="status-card"><div style="font-weight:600;margin-bottom:6px;">Polygon</div><div><span class="status-dot dot-yellow"></span><span style="font-size:13px;color:#f59e0b;">Coming Soon</span></div></div>
+</div>
+</div>
+
+</div>
+
+<!-- ===== SECTION: SETTINGS ===== -->
+<div class="section" id="sec-settings">
+
+<div class="panel">
+<h3>API Configuration</h3>
+<div class="form-grid">
+<div><label>OpenAI API Key</label><input type="password" placeholder="sk-..."></div>
+<div><label>RPC URL</label><input type="text" placeholder="https://sepolia.infura.io/v3/..."></div>
+<div><label>Policy Contract Address</label><input type="text" placeholder="0x..."></div>
+<div><label>Owner Wallet</label><input type="text" placeholder="0x..."></div>
+</div>
+<button class="primary" onclick="alert('Settings saved (UI demo only)')">Save Settings</button>
+</div>
+
+<div class="panel">
+<h3>System Info</h3>
+<div style="display:grid;gap:12px;margin-top:8px;">
+<div style="display:flex;justify-content:space-between;padding:12px;background:#0f172a;border-radius:10px;">
+<span style="color:#94a3b8;">Flask Version</span><span>3.x</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:12px;background:#0f172a;border-radius:10px;">
+<span style="color:#94a3b8;">Python Version</span><span>3.10</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:12px;background:#0f172a;border-radius:10px;">
+<span style="color:#94a3b8;">Data Store</span><span>In-memory (demo)</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:12px;background:#0f172a;border-radius:10px;">
+<span style="color:#94a3b8;">Phase</span><span>1 — Prototype</span>
+</div>
+</div>
+</div>
+
+</div>
+
+</div><!-- end .main -->
 
 <script>
 
-async function loadDashboard(){
+// ===== NAVIGATION =====
 
-const res = await fetch("/api/dashboard")
-const data = await res.json()
-
-document.getElementById("policyCount").innerText = data.kpi.policies
-document.getElementById("paymentCount").innerText = data.kpi.payments
-document.getElementById("volumeValue").innerText = "$"+data.kpi.volume
-document.getElementById("approvalRate").innerText = data.kpi.approval_rate+"%"
-
-if(data.wallet.connected){
-document.getElementById("walletStatus").innerText="Wallet "+data.wallet.address
+const pageTitles = {
+  dashboard:    "Payment Control Dashboard",
+  policies:     "Payment Policies",
+  payments:     "Payments",
+  agents:       "Agent Registry",
+  transactions: "Transactions",
+  analytics:    "Analytics",
+  wallets:      "Wallets",
+  settings:     "Settings"
 }
 
-const table = document.getElementById("txTable")
-table.innerHTML=""
+function navigate(section) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"))
+  document.querySelectorAll(".nav a").forEach(a => a.classList.remove("active"))
+  document.getElementById("sec-" + section).classList.add("active")
+  document.querySelector(`.nav a[data-section="${section}"]`).classList.add("active")
+  document.getElementById("pageTitle").innerText = pageTitles[section]
 
-data.transactions.forEach(tx=>{
-
-table.innerHTML += `
-<tr>
-<td>${tx.id}</td>
-<td>${tx.recipient}</td>
-<td>${tx.policy}</td>
-<td>$${tx.amount}</td>
-<td><span class="badge ${tx.status.toLowerCase()}">${tx.status}</span></td>
-<td>${tx.hash}</td>
-</tr>
-`
-})
-
-const activity = document.getElementById("activityList")
-activity.innerHTML=""
-
-data.activity.forEach(a=>{
-
-activity.innerHTML += `
-<div class="activity">
-<div>${a.action}</div>
-<div>${a.time}</div>
-</div>
-`
-})
-
+  if(section === "dashboard")    { loadDashboard(); loadChart(); }
+  if(section === "policies")     { loadPoliciesTable(); }
+  if(section === "payments")     { loadPaymentsTable(); }
+  if(section === "transactions") { loadFullTxTable(); }
+  if(section === "analytics")    { loadAnalytics(); }
+  if(section === "wallets")      { updateWalletPanel(); }
 }
 
-async function connectWallet(){
+// ===== DATA LOADERS =====
 
-await fetch("/api/wallet/connect",{method:"POST"})
-loadDashboard()
+async function loadDashboard() {
+  const res  = await fetch("/api/dashboard")
+  const data = await res.json()
 
+  document.getElementById("policyCount").innerText  = data.kpi.policies
+  document.getElementById("paymentCount").innerText = data.kpi.payments
+  document.getElementById("volumeValue").innerText  = "$" + data.kpi.volume.toLocaleString()
+  document.getElementById("approvalRate").innerText = data.kpi.approval_rate + "%"
+
+  updateWalletStatus(data.wallet)
+
+  const tbody = document.getElementById("txTableDash")
+  tbody.innerHTML = data.transactions.length
+    ? data.transactions.slice(0,5).map(txRow).join("")
+    : `<tr><td colspan="6" style="color:#475569;text-align:center;padding:20px;">No transactions yet</td></tr>`
+
+  const al = document.getElementById("activityList")
+  al.innerHTML = data.activity.length
+    ? data.activity.map(a => `<div class="activity"><div>${a.action} — <span style="color:#94a3b8;">${a.text}</span></div><div style="color:#64748b;font-size:12px;">${a.time}</div></div>`).join("")
+    : `<div style="color:#475569;text-align:center;padding:20px;">No activity yet</div>`
 }
 
-async function loadChart(){
-
-const res = await fetch("/api/charts/payments")
-const data = await res.json()
-
-const chart = document.getElementById("chart")
-chart.innerHTML=""
-
-data.forEach(d=>{
-
-const height = d.value/80
-
-chart.innerHTML += `
-<div style="text-align:center;">
-<div class="bar" style="height:${height}px"></div>
-<div class="bar-label">${d.day}</div>
-</div>
-`
-})
-
+async function loadChart() {
+  const res  = await fetch("/api/charts/payments")
+  const data = await res.json()
+  renderBars("chart", data)
 }
 
-async function createPolicy(){
+async function loadAnalytics() {
+  const res  = await fetch("/api/dashboard")
+  const data = await res.json()
+  const txs  = data.transactions
 
-const payload = {
-agent: document.getElementById("f_agent").value,
-token: document.getElementById("f_token").value,
-totalBudget: document.getElementById("f_budget").value,
-perTxLimit: document.getElementById("f_perTx").value,
-validFrom: document.getElementById("f_validFrom").value || "0",
-validUntil: document.getElementById("f_validUntil").value || "0",
-purpose: document.getElementById("f_purpose").value
+  document.getElementById("analyticsVolume").innerText   = "$" + data.kpi.volume.toLocaleString()
+  document.getElementById("analyticsApproval").innerText = data.kpi.approval_rate + "%"
+  document.getElementById("analyticsPolicies").innerText = data.kpi.policies
+
+  const avg = txs.length ? Math.round(txs.reduce((s,t)=>s+t.amount,0)/txs.length) : 0
+  document.getElementById("analyticsAvg").innerText = "$" + avg.toLocaleString()
+
+  const chartRes  = await fetch("/api/charts/payments")
+  const chartData = await chartRes.json()
+  renderBars("analyticsChart", chartData)
+
+  const completed = txs.filter(t=>t.status==="Completed").length
+  const pending   = txs.filter(t=>t.status==="Pending").length
+  const declined  = txs.filter(t=>t.status==="Declined").length
+  document.getElementById("statusBreakdown").innerHTML = `
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:120px;background:#0f172a;border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#10b981;">${completed}</div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:4px;">Completed</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:#0f172a;border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#f59e0b;">${pending}</div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:4px;">Pending</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:#0f172a;border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#ef4444;">${declined}</div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:4px;">Declined</div>
+      </div>
+    </div>`
 }
 
-const res = await fetch("/api/policies",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(payload)
-})
-const data = await res.json()
-document.getElementById("policyResult").innerText = `Policy ${data.policyId} deployed (tx: ${data.txHash})`
-loadDashboard()
+async function loadPoliciesTable() {
+  const res  = await fetch("/api/dashboard")
+  const data = await res.json()
 
+  // policies are tracked in the store but not yet returned in /api/dashboard
+  // re-use transactions as a proxy for now; policies come back via KPI
+  document.getElementById("policyTable").innerHTML = ""
+  document.getElementById("policyTableEmpty").style.display = data.kpi.policies === 0 ? "block" : "none"
 }
 
-async function generateIntent(){
-
-const task = document.getElementById("f_task").value
-if(!task) return
-
-const res = await fetch("/api/payment-intent",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({task})
-})
-const data = await res.json()
-const el = document.getElementById("intentResult")
-el.style.display="block"
-el.innerText = JSON.stringify(data, null, 2)
-
+async function loadPaymentsTable() {
+  const res  = await fetch("/api/dashboard")
+  const data = await res.json()
+  const tbody = document.getElementById("txTablePayments")
+  tbody.innerHTML = data.transactions.length
+    ? data.transactions.map(txRow).join("")
+    : `<tr><td colspan="6" style="color:#475569;text-align:center;padding:20px;">No payments yet</td></tr>`
 }
 
+async function loadFullTxTable() {
+  const res  = await fetch("/api/dashboard")
+  const data = await res.json()
+  const tbody = document.getElementById("txTableFull")
+  const empty = document.getElementById("txEmpty")
+  if(data.transactions.length) {
+    tbody.innerHTML = data.transactions.map(txRow).join("")
+    empty.style.display = "none"
+  } else {
+    tbody.innerHTML = ""
+    empty.style.display = "block"
+  }
+}
+
+function renderBars(containerId, data) {
+  const max = Math.max(...data.map(d=>d.value))
+  document.getElementById(containerId).innerHTML = data.map(d=>`
+    <div style="text-align:center;flex:1;">
+      <div class="bar" style="height:${Math.round(d.value/max*180)}px"></div>
+      <div class="bar-label">${d.day}</div>
+    </div>`).join("")
+}
+
+function txRow(tx) {
+  return `<tr>
+    <td>${tx.id}</td>
+    <td>${tx.recipient}</td>
+    <td>${tx.policy}</td>
+    <td>$${tx.amount.toLocaleString()}</td>
+    <td><span class="badge ${tx.status.toLowerCase()}">${tx.status}</span></td>
+    <td style="font-family:monospace;font-size:12px;">${tx.hash}</td>
+  </tr>`
+}
+
+// ===== WALLET =====
+
+async function connectWallet() {
+  const res  = await fetch("/api/wallet/connect", {method:"POST"})
+  const data = await res.json()
+  updateWalletStatus(data)
+  updateWalletPanel(data)
+  loadDashboard()
+}
+
+function updateWalletStatus(wallet) {
+  const el = document.getElementById("walletStatus")
+  el.innerText = wallet && wallet.connected ? "Wallet " + wallet.address : "Wallet not connected"
+}
+
+function updateWalletPanel(wallet) {
+  if(!wallet) return
+  if(wallet.connected) {
+    document.getElementById("walletAddress").innerText    = wallet.address
+    document.getElementById("walletConnState").innerText  = "Connected and ready"
+    document.getElementById("walletConnState").style.color = "#10b981"
+  }
+}
+
+// ===== POLICIES =====
+
+async function createPolicy() {
+  const payload = {
+    agent:       document.getElementById("f_agent").value,
+    token:       document.getElementById("f_token").value,
+    totalBudget: document.getElementById("f_budget").value,
+    perTxLimit:  document.getElementById("f_perTx").value,
+    validFrom:   document.getElementById("f_validFrom").value || "0",
+    validUntil:  document.getElementById("f_validUntil").value || "0",
+    purpose:     document.getElementById("f_purpose").value
+  }
+
+  const res  = await fetch("/api/policies", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)})
+  const data = await res.json()
+
+  document.getElementById("policyResult").innerText = `Policy ${data.policyId} deployed (tx: ${data.txHash})`
+
+  // Add to policies table immediately
+  const tbody = document.getElementById("policyTable")
+  tbody.innerHTML += `<tr>
+    <td style="font-family:monospace;">${data.policyId}</td>
+    <td style="font-family:monospace;font-size:12px;">${payload.agent}</td>
+    <td>${payload.token}</td>
+    <td>$${Number(payload.totalBudget).toLocaleString()}</td>
+    <td>${payload.purpose}</td>
+    <td style="font-family:monospace;font-size:12px;">${data.txHash}</td>
+  </tr>`
+  document.getElementById("policyTableEmpty").style.display = "none"
+}
+
+// ===== PAYMENTS =====
+
+async function generateIntent() {
+  const task = document.getElementById("f_task").value
+  if(!task) return
+
+  const el = document.getElementById("intentResult")
+  el.style.display = "block"
+  el.innerText = "Generating..."
+
+  const res  = await fetch("/api/payment-intent", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({task})})
+  const data = await res.json()
+  el.innerText = JSON.stringify(data, null, 2)
+}
+
+// ===== INIT =====
 loadDashboard()
 loadChart()
 
@@ -547,5 +581,3 @@ loadChart()
 
 </body>
 </html>
-
-
