@@ -9,97 +9,155 @@
 
 ---
 
-## Run Command
+## Run Commands
 
 ```bash
 solc-select use 0.8.28
 slither contracts/src/PolicyManager.sol
+slither contracts/src/PolicyManager.sol --print human-summary
+slither contracts/src/PolicyManager.sol --print contract-summary
+slither contracts/src/PolicyManager.sol --print function-summary
 ```
 
 ---
 
-## Summary
+## Top-Level Summary
 
-| # | Detector | Severity | Status |
-|---|----------|----------|--------|
-| 1 | `immutable-states` | Optimization | **Fixed** — `owner` declared `immutable` |
-| 2 | `solc-version` | Informational | **Fixed** — pragma pinned to `0.8.28` |
-| 3 | `timestamp` | Low | **Accepted risk** — see rationale below |
-
-**Final result:** 1 remaining finding (accepted), 0 high/medium findings.
+| Metric | Result |
+|--------|--------|
+| Contracts analyzed | 1 |
+| Source lines of code (SLOC) | 110 |
+| Assembly lines | 0 |
+| High issues | **0** |
+| Medium issues | **0** |
+| Low issues | 1 (accepted — see below) |
+| Optimization issues | 0 |
+| Informational issues | 0 |
+| Detectors run | 101 |
 
 ---
 
-## Finding Detail
+## Finding History
+
+Two findings were identified and fixed before finalizing. One low-severity finding remains as an accepted risk.
 
 ### Finding 1 — `immutable-states` (FIXED)
 
-**Original:** `address public owner;`
-**Fixed:** `address public immutable owner;`
+| | |
+|-|-|
+| **Severity** | Optimization |
+| **Location** | `PolicyManager.sol` line 30 |
+| **Original** | `address public owner;` |
+| **Fixed** | `address public immutable owner;` |
 
-**Why this matters:**
-A state variable set only in the constructor and never modified should be `immutable`. This reduces gas cost on every read and prevents accidental reassignment in future contract upgrades.
+**Why this matters:** A state variable set only in the constructor and never modified should be `immutable`. This saves gas on every read (~200 gas per SLOAD → ~3 gas for an immutable) and prevents accidental reassignment in future upgrades.
 
 ---
 
 ### Finding 2 — `solc-version` (FIXED)
 
-**Original:** `pragma solidity ^0.8.20;`
-**Fixed:** `pragma solidity 0.8.28;`
+| | |
+|-|-|
+| **Severity** | Informational |
+| **Location** | `PolicyManager.sol` line 2 |
+| **Original** | `pragma solidity ^0.8.20;` |
+| **Fixed** | `pragma solidity 0.8.28;` |
 
-**Why this matters:**
-The `^0.8.20` range would allow compilation with versions containing known compiler bugs (`VerbatimInvalidDeduplication`, `FullInlinerNonExpressionSplitArgumentEvaluationOrder`, `MissingSideEffectsOnSelectorAccess`). Pinning to `0.8.28` uses the latest stable release with all known issues resolved.
+**Why this matters:** The `^0.8.20` range permitted compilation with versions containing three known compiler bugs (`VerbatimInvalidDeduplication`, `FullInlinerNonExpressionSplitArgumentEvaluationOrder`, `MissingSideEffectsOnSelectorAccess`). Pinning to `0.8.28` uses the latest stable release with all known issues resolved.
 
 ---
 
-### Finding 3 — `timestamp` (ACCEPTED RISK)
+### Finding 3 — `block.timestamp` comparisons (ACCEPTED RISK)
 
-**Location:** `PolicyManager.approvePayment` lines 121–122
-**Pattern:**
+| | |
+|-|-|
+| **Severity** | Low |
+| **Location** | `approvePayment()` lines 121–122 |
+| **Detector** | `timestamp` |
+
 ```solidity
 require(block.timestamp >= p.validFrom, "Policy not yet active");
 require(block.timestamp <= p.validUntil, "Policy expired");
 ```
 
-**Slither warning:** Block timestamps can be manipulated by miners by ±15 seconds.
+**Slither warning:** Block timestamps can be manipulated by validators by ±15 seconds.
 
-**Our assessment:** **Acceptable for this use case.**
-
-- Policy validity windows in this system are measured in days to months (e.g., a monthly SaaS budget, a 90-day contractor engagement)
-- A 15-second timestamp drift has no meaningful impact on policy activation or expiry in these time scales
-- The only scenario where this matters is if a policy's `validFrom`/`validUntil` is set to a precision of seconds, which the system does not support
-- This is the standard accepted pattern for date-range enforcement in production Solidity contracts (see OpenZeppelin's `TimelockController`)
-
-**No code change required.**
+**Assessment: Accepted.** Policy validity windows in this system are measured in days to months (monthly SaaS budgets, 90-day contractor engagements). A 15-second drift has no meaningful impact. This is the standard accepted pattern for date-range enforcement in Solidity — used in OpenZeppelin's `TimelockController`, `VestingWallet`, and `Governor` contracts.
 
 ---
 
-## What Slither Did Not Find
+## What Slither Did NOT Find
 
-All 101 detectors ran and found **no** issues in the following categories:
+All 101 detectors ran across the following vulnerability categories with **zero findings**:
 
-- Reentrancy (no external calls in state-changing functions)
-- Integer overflow/underflow (Solidity 0.8.x built-in SafeMath)
-- Unprotected `selfdestruct` or `delegatecall`
-- Unchecked return values
-- Shadowed variables
-- Incorrect ERC-20 interface
-- Access control bypass
-- tx.origin misuse
-- Uninitialized storage pointers
-- Arbitrary `send`/`transfer`
-
----
-
-## Next Steps for Production
-
-| Step | Description | Provider |
-|------|-------------|----------|
-| Manual audit | Human expert line-by-line review | OpenZeppelin, Trail of Bits, or Hacken |
-| Formal verification | Mathematical proof of invariants | Certora Prover |
-| Bug bounty | Community-driven finding program | Immunefi |
-| Mainnet deployment | Only after above are complete | — |
+| Category | Detectors | Result |
+|----------|-----------|--------|
+| Reentrancy | `reentrancy-eth`, `reentrancy-no-eth`, `reentrancy-benign`, `reentrancy-events` | Clean |
+| Access control | `suicidal`, `controlled-delegatecall`, `arbitrary-send-eth` | Clean |
+| Integer arithmetic | `tautology`, `divide-before-multiply`, `weak-prng` | Clean |
+| Unchecked returns | `unchecked-transfer`, `unchecked-send`, `unchecked-lowlevel` | Clean |
+| Dangerous calls | `delegatecall-loop`, `msg-value-loop`, `calls-loop` | Clean |
+| Variable shadowing | `shadowing-abstract`, `shadowing-local`, `shadowing-state` | Clean |
+| Initialization | `uninitialized-local`, `uninitialized-state`, `uninitialized-storage` | Clean |
+| tx.origin misuse | `tx-origin` | Clean |
+| Dangerous strict equality | `incorrect-equality` | Clean |
+| Events missing | `events-access`, `events-maths` | Clean |
+| Assembly | All assembly detectors | N/A (no assembly) |
 
 ---
 
-*This automated analysis is a first-pass screening tool, not a substitute for a professional security audit.*
+## Contract Summary (from `--print contract-summary`)
+
+```
++ Contract PolicyManager (Most derived contract)
+  - From PolicyManager
+    - approvePayment(uint256,uint256)         (external)
+    - constructor()                           (public)
+    - createPolicy(address,address,uint256,   (external)
+        uint256,uint256,uint256,bytes32,bool)
+    - deactivatePolicy(uint256)               (external)
+    - getAgentPolicies(address)               (external)
+    - getPolicy(uint256)                      (external)
+    - remainingBudget(uint256)                (external)
+```
+
+All state-changing functions have cyclomatic complexity of 1 — low complexity, easy to reason about.
+
+---
+
+## Function Access Control Matrix
+
+| Function | Access | Modifies State | External Calls |
+|----------|--------|---------------|----------------|
+| `constructor()` | deployer only | `owner` | None |
+| `createPolicy(...)` | `onlyOwner` | `policies`, `agentPolicies`, `policyCount` | None |
+| `approvePayment(...)` | policy agent only | `policies.spentAmount` | None |
+| `deactivatePolicy(...)` | `onlyOwner` | `policies.active` | None |
+| `getPolicy(...)` | public | None (view) | None |
+| `getAgentPolicies(...)` | public | None (view) | None |
+| `remainingBudget(...)` | public | None (view) | None |
+
+No function makes external calls to untrusted contracts — reentrancy is architecturally impossible.
+
+---
+
+## Note on Additional Tools
+
+- **Mythril** — could not install on Windows (native C build failure in `pyethash` dependency)
+- **Aderyn (Cyfrin)** — requires Rust/Cargo, not available in this environment
+- **4naly3er** — web-based tool available at `https://4naly3er.hgrosse.fr/` for a third-party pass
+
+---
+
+## Conclusion
+
+PolicyManager.sol is a compact, low-complexity contract (110 SLOC, 7 functions, no assembly, no external calls). After fixing the two automated findings, the contract presents **no high or medium vulnerabilities** as detected by Slither's full 101-detector suite.
+
+**Recommended before mainnet deployment:**
+- Manual audit by a professional firm (OpenZeppelin, Trail of Bits, or Hacken)
+- Formal verification of the budget accounting invariant (`spentAmount ≤ totalBudget`)
+- Bug bounty program on Immunefi
+
+---
+
+*Automated analysis is a first-pass screening tool, not a substitute for a professional security audit.*

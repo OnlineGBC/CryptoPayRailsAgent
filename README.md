@@ -4,7 +4,7 @@
 ![Flask](https://img.shields.io/badge/flask-3.x-green)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 ![Slither](https://img.shields.io/badge/slither-0%20high%2F0%20medium-brightgreen)
-![Audit](https://img.shields.io/badge/audit-CertiK%20SkyNet%20in%20progress-yellow)
+![Solidity](https://img.shields.io/badge/solidity-0.8.28-blue)
 
 **Intelligent Spend Management for the AI-Driven Enterprise**
 
