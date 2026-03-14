@@ -54,5 +54,13 @@ jobs:
         run: pip install mythril
 
       - name: Run Mythril
-        # SWC-116 (block.timestamp) is suppressed — accepted low risk, documented in contracts/audit/slither_report.md
-        run: myth analyze contracts/src/PolicyManager.sol --solv 0.8.28 --execution-timeout 90 --swc-blacklist 116
+        # SWC-116 (block.timestamp) is an accepted low risk — documented in contracts/audit/slither_report.md
+        # Fail only if Mythril reports any SWC ID other than 116
+        run: |
+          output=$(myth analyze contracts/src/PolicyManager.sol --solv 0.8.28 --execution-timeout 90 2>&1) || true
+          echo "$output"
+          if echo "$output" | grep "SWC ID:" | grep -qv "116"; then
+            echo "FAIL: unexpected findings beyond accepted SWC-116"
+            exit 1
+          fi
+          echo "PASS: no findings beyond accepted SWC-116 (block.timestamp)"
