@@ -260,6 +260,225 @@ AP automation tool — and why the blockchain layer is not optional.**
 
 ------------------------------------------------------------------------
 
+------------------------------------------------------------------------
+
+## How It Works — Agent B: Global Contractor Payments
+
+### The Scenario
+
+A global enterprise pays independent contractors across multiple countries
+every two weeks. Contractors are pre-approved by procurement and legal.
+Payments are made in USDC to avoid FX conversion costs and delays.
+The rules are:
+
+- Total monthly budget: $50,000
+- Maximum per transaction: $5,000 (per contractor per pay run)
+- Pre-approved contractors only — verified wallet addresses
+- Payments only during business hours (Monday–Friday, 9am–6pm UTC)
+  to ensure a human team is available if anything goes wrong
+- Each payment must reference the active contractor agreement hash
+
+---
+
+### PHASE 1 — One-Time Human Setup
+
+| Step | Who | What They Do | Time |
+|---|---|---|---|
+| 1 | Legal / Procurement | Approves contractor roster — reviews contracts, verifies identities, confirms right-to-work in each jurisdiction | 1–2 days (done as part of normal onboarding) |
+| 2 | Procurement / AP Manager | Records each contractor's USDC wallet address — verified directly with contractor to prevent substitution fraud | 30 min per contractor |
+| 3 | Legal | Finalises the master contractor agreement document — standard terms covering payment, IP, confidentiality | Existing process |
+| 4 | AP Manager | Generates a cryptographic hash of the approved contractor list and master agreement — both stored in the policy as purposeHash | 5 min |
+| 5 | AP Manager | Opens the Policies tab and creates Agent B's policy: $50,000 monthly budget, $5,000 per-tx limit, valid date window (current month), USDC token, purpose hash | 5 min |
+| 6 | AP Manager | Sets business hours enforcement: validFrom = Monday 9am UTC, validUntil = Friday 6pm UTC, renewed each week | 2 min per week |
+| 7 | AP Manager | Clicks Deploy — policy written to blockchain | 1 min |
+| 8 | IT / Dev | Configures Agent B to monitor the contractor invoice inbox and connect to the payroll schedule | 1–2 hours |
+| 9 | Contractors | Notified of USDC payment setup — provide wallet address, receive test transaction to confirm | 15 min per contractor |
+
+**Total human setup time: 1–2 days for initial contractor onboarding (mostly existing procurement process), 2 hours for technical setup, done once.**
+
+---
+
+### PHASE 2 — Ongoing Agent Operation (No Human Required)
+
+When a contractor in Singapore submits an invoice for $3,200:
+
+| Step | Who | What Happens |
+|---|---|---|
+| 1 | Agent B | Detects new invoice — contractor name, amount, wallet address, invoice reference |
+| 2 | Agent B | Verifies: is this contractor on the approved roster? Does the submitted wallet address match the registered address for this contractor? |
+| 3 | Agent B | Verifies: does the invoice reference the current active contractor agreement? (Hash comparison) |
+| 4 | Agent B | Checks current time: is it Monday–Friday, 9am–6pm UTC? |
+| 5 | Agent B | Calls PolicyManager smart contract: "Can I pay $3,200 against policy POL-102?" |
+| 6 | Smart Contract | Checks: $3,200 ≤ $5,000 per-tx limit ✅ |
+| 7 | Smart Contract | Checks: running monthly total + $3,200 ≤ $50,000 ✅ |
+| 8 | Smart Contract | Checks: current timestamp within valid window ✅ |
+| 9 | Smart Contract | Checks: purposeHash matches active contractor agreement ✅ |
+| 10 | Smart Contract | Approves payment, updates running spend on-chain |
+| 11 | Agent B | Executes USDC transfer directly to contractor's wallet — no bank, no SWIFT, no correspondent fees |
+| 12 | Contractor | Receives $3,200 USDC in Singapore in ~2 seconds. No currency conversion needed. No bank hold. |
+| 13 | Smart Contract | Emits PaymentApproved event — permanently recorded |
+| 14 | Dashboard | Transaction visible in real time with network hash |
+| 15 | CFO | Sees it on the dashboard — no action needed |
+
+**Traditional alternative:** SWIFT wire to Singapore bank, $35–$50 sender fee, $15–$25 receiver fee, 2–4 business days, possible intermediate bank deductions.
+
+**With Agent B:** $0.02, 2 seconds, full amount delivered, independently verifiable.
+
+---
+
+### PHASE 3 — Exception Handling (Human Back in the Loop)
+
+| Situation | What the Contract Does | What the Agent Does | Human Action Required |
+|---|---|---|---|
+| Invoice from approved contractor, correct amount | Approves | Pays | None |
+| Invoice from contractor not on approved roster | Rejects — wallet not recognised | Flags for human review | Procurement verifies and onboards contractor, or rejects invoice |
+| Contractor submits invoice with updated wallet address | Rejects — wallet mismatch | Flags for human review | AP Manager verifies new address directly with contractor (prevents substitution fraud) |
+| Invoice submitted at 11pm UTC (outside business hours) | Rejects — outside valid window | Flags for human review | Agent queues for next business day, or AP Manager manually approves if urgent |
+| Monthly budget reaches $48,000 — $3,500 invoice arrives | Rejects — would exceed $50,000 | Flags for human review | CFO decides: increase budget or defer to next month |
+| Same invoice submitted twice (duplicate) | Rejects — budget already debited | Flags as duplicate | AP Manager confirms and closes |
+| Contractor references outdated agreement version | Rejects — hash mismatch | Flags for human review | Legal confirms whether old agreement is still valid |
+| Invoice amount is $6,000 (above per-tx limit) | Rejects — exceeds per-tx cap | Flags for human review | AP Manager splits into two payments or escalates for CFO exception approval |
+| Contractor in sanctioned jurisdiction | Rejects — wallet not on approved list | Flags for human review | Legal / Compliance reviews — never reaches the contract |
+
+---
+
+### What Makes Contractor Payments Specifically Better With This System
+
+Traditional contractor payments across borders involve:
+- Bank wire fees on both ends ($50–$75 total)
+- 2–5 day delays while correspondent banks process
+- Currency conversion losses if paying in USD to a non-USD country
+- Manual reconciliation of who was paid, when, and how much
+- Compliance exposure if a contractor's jurisdiction changes
+
+With Agent B:
+- Every contractor payment is on-chain and independently auditable
+- No wire fees — $0.02 per transaction regardless of destination
+- USDC is a dollar-pegged stablecoin — no FX conversion needed
+- The approved wallet list prevents payment redirection fraud
+- Business hours enforcement means a human team is always available if an exception occurs
+- The smart contract's running total prevents month-end budget overruns
+
+------------------------------------------------------------------------
+
+## How It Works — Agent C: Employee Travel & Expense Reimbursements
+
+### The Scenario
+
+Employees submit travel and expense (T&E) claims after business trips
+or client entertainment. Under the current process, claims go to a
+manager for approval, then to AP for payment — typically taking 1–2 weeks
+and requiring manual policy checks.
+
+The rules under the new system:
+
+- Maximum per claim: $500 (claims above this go to manager approval)
+- Claims must match approved expense categories in the company T&E policy
+- Each claim must reference the active T&E policy document hash
+- Claims processed within 24 hours of submission
+- Payments made to the employee's registered USDC wallet or bank
+
+---
+
+### PHASE 1 — One-Time Human Setup
+
+| Step | Who | What They Do | Time |
+|---|---|---|---|
+| 1 | Finance / HR | Finalises the company T&E policy document — defines approved categories (travel, accommodation, meals, client entertainment), per-category limits, and documentation requirements | Existing process |
+| 2 | Finance | Generates a cryptographic hash of the T&E policy PDF — this becomes the purposeHash for Agent C's policy | 2 min |
+| 3 | HR / IT | Collects each employee's registered payment wallet or bank account — verified against employee records | Part of onboarding |
+| 4 | AP Manager | Creates Agent C's policy on the dashboard: $500 per-tx limit, USDC token, purpose hash of T&E policy, valid for current quarter | 5 min |
+| 5 | AP Manager | Deploys policy to blockchain | 1 min |
+| 6 | IT / Dev | Integrates Agent C with the expense submission system (e.g. Concur, Expensify, or internal portal) via API | 2–4 hours |
+| 7 | Employees | Notified of new instant reimbursement process — claims under $500 paid within 24 hours | 0 min (benefit to employee) |
+
+**Total human setup time: 2–4 hours for technical integration, done once.
+The T&E policy itself is an existing document — no additional work required.**
+
+---
+
+### PHASE 2 — Ongoing Agent Operation (No Human Required)
+
+When an employee submits a $240 claim for client dinner receipts:
+
+| Step | Who | What Happens |
+|---|---|---|
+| 1 | Employee | Submits expense claim via the company portal: category (client entertainment), amount ($240), receipts attached, date |
+| 2 | Agent C | Receives the claim via API from the expense portal |
+| 3 | Agent C | Checks: does this expense category appear in the approved T&E policy? (client entertainment — yes) |
+| 4 | Agent C | Checks: is the amount within the per-category limit defined in the T&E policy? ($240 within client entertainment limit — yes) |
+| 5 | Agent C | Checks: is the claim referencing the current active T&E policy hash? |
+| 6 | Agent C | Calls PolicyManager smart contract: "Can I pay $240 against policy POL-103?" |
+| 7 | Smart Contract | Checks: $240 ≤ $500 per-tx limit ✅ |
+| 8 | Smart Contract | Checks: running total within monthly budget ✅ |
+| 9 | Smart Contract | Checks: within valid policy window ✅ |
+| 10 | Smart Contract | Checks: purposeHash matches current T&E policy ✅ |
+| 11 | Smart Contract | Approves payment, updates running spend on-chain |
+| 12 | Agent C | Executes USDC transfer to employee's registered wallet |
+| 13 | Smart Contract | Emits PaymentApproved event with claim reference |
+| 14 | Dashboard | Reimbursement logged in real time — Finance can see all claims |
+| 15 | Employee | Receives $240 USDC within seconds of submission — not 2 weeks |
+
+**Traditional alternative:** Claim submitted → manager approves (2–3 days) → AP processes (3–5 days) → bank transfer (1–2 days) → employee reimbursed after 1–2 weeks.**
+
+**With Agent C:** Submission to reimbursement in under 60 seconds for any claim under $500 that matches policy.
+
+---
+
+### PHASE 3 — Exception Handling (Human Back in the Loop)
+
+| Situation | What the Contract Does | What the Agent Does | Human Action Required |
+|---|---|---|---|
+| $240 client dinner claim, valid receipts | Approves | Pays | None |
+| $650 claim (above $500 per-tx limit) | Rejects — exceeds per-tx cap | Routes to manager approval queue | Manager reviews and approves or rejects manually |
+| Claim category not in T&E policy (e.g. gym membership) | Rejects — category not covered | Flags for human review | Finance confirms whether to allow as exception |
+| Employee submits claim referencing outdated T&E policy | Rejects — hash mismatch | Flags for human review | Finance confirms whether old policy still applies (e.g. during policy update transition) |
+| Duplicate claim submitted twice | Rejects — already processed | Flags as duplicate | AP Manager confirms and closes |
+| Claim submitted by employee who has left the company | Rejects — wallet not on active employee list | Flags for human review | HR confirms status — final expense may be valid |
+| Receipt date is 6 months ago (outside claim window) | Rejects — outside valid date window | Flags for human review | Finance decides whether to allow late claim |
+| Employee's registered wallet changed | Rejects — wallet mismatch | Flags for human review | HR verifies new wallet directly with employee (prevents fraudulent redirection) |
+
+---
+
+### What Makes T&E Reimbursement Specifically Better With This System
+
+Traditional expense reimbursement is one of the most complained-about
+processes in any large company:
+- Employees wait 1–2 weeks to be reimbursed for money they spent out of pocket
+- AP teams spend significant time manually checking receipts against policy
+- Policy violations are caught after the fact, if at all
+- No independent audit trail — disputes rely on email chains and spreadsheets
+
+With Agent C:
+- Claims under $500 that match policy are paid within seconds
+- The T&E policy hash means Agent C is always enforcing the current approved version
+- If Finance updates the T&E policy, they generate a new hash, update the policy, and Agent C instantly enforces the new rules for all future claims
+- Employees see reimbursement as a differentiator — instant payment vs. the industry standard of weeks
+- Finance gets a real-time dashboard of all T&E spend with full on-chain audit trail
+
+------------------------------------------------------------------------
+
+## All Three Agents Together — The CFO's View
+
+At any point, the CFO sees on the dashboard:
+
+| Agent | Role | Monthly Budget | Spent | Remaining | Transactions |
+|---|---|---|---|---|---|
+| Agent A | SaaS vendor payments | $15,000 | $12,400 | $2,600 | 8 completed |
+| Agent B | Contractor payments | $50,000 | $31,200 | $18,800 | 14 completed, 1 pending |
+| Agent C | T&E reimbursements | $25,000 | $8,750 | $16,250 | 37 completed, 2 flagged |
+
+Every row in the Transactions tab links to an on-chain record. Every
+exception is in the Activity feed. Every policy rule is permanently
+visible on the blockchain.
+
+No AP clerk had to touch any of the 59 completed transactions.
+A human was only needed for the 3 flagged exceptions.
+
+**That is the operating model this platform enables.**
+
+------------------------------------------------------------------------
+
 ## Production Roadmap
 
 | Phase | What Gets Added | Business Benefit |
