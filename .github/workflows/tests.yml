@@ -1,0 +1,39 @@
+name: Python Tests
+
+on:
+  push:
+    paths:
+      - "app/**"
+      - "tests/**"
+      - "requirements.txt"
+  pull_request:
+    paths:
+      - "app/**"
+      - "tests/**"
+      - "requirements.txt"
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest
+
+      - name: Run tests
+        env:
+          OPENAI_API_KEY: ""
+          PRIVATE_KEY: ""
+          POLICY_CONTRACT: ""
+          RPC_URL: ""
+        run: |
+          cd app
+          python -m pytest ../tests/ -v
