@@ -98,7 +98,7 @@ print("Waiting for confirmation ...")
 receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
 contract_address = receipt.contractAddress
 
-print(f"\n✅ PolicyManager deployed!")
+print(f"\nPolicyManager deployed!")
 print(f"   Contract : {contract_address}")
 print(f"   Tx hash  : 0x{tx_hash.hex()}")
 print(f"   Explorer : https://sepolia.etherscan.io/address/{contract_address}")

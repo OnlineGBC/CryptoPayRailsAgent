@@ -1,0 +1,8 @@
+{
+  "network": "sepolia",
+  "contract": "PolicyManager",
+  "address": "0x16229C14aAa18C7bC069f5b9092f5Af8884f3781",
+  "deployer": "0x442B7bcb6Aa852fa8334eE6A654A0238559026C9",
+  "tx_hash": "0x931197b7a9fa364a7e1b0bcdd0de8a6608980167b8a47cd1940831a5e3506572",
+  "explorer": "https://sepolia.etherscan.io/address/0x16229C14aAa18C7bC069f5b9092f5Af8884f3781"
+}
