@@ -2,11 +2,13 @@ from flask import Flask, render_template, jsonify, request
 from store import POLICIES, TRANSACTIONS, ACTIVITY, WALLET, add_activity, new_tx
 from routes.policies import policies_bp
 from routes.payments import payments_bp
+from routes.uniswap import uniswap_bp
 
 app = Flask(__name__)
 
 app.register_blueprint(policies_bp)
 app.register_blueprint(payments_bp)
+app.register_blueprint(uniswap_bp)
 
 # -------------------------
 # Pages

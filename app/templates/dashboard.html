@@ -288,6 +288,25 @@ button.secondary{background:transparent;border:1px solid #1e293b;padding:10px 20
 <div id="statusBreakdown" style="margin-top:16px;"></div>
 </div>
 
+<div class="panel">
+<h3>Live Token Prices <span style="font-size:12px;color:#64748b;font-weight:400;">via Uniswap v3</span></h3>
+<div id="tokenPrices" style="margin-top:16px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+<div style="text-align:center;color:#475569;">Loading...</div>
+</div>
+<div style="margin-top:16px;border-top:1px solid #1e293b;padding-top:16px;">
+<h4 style="margin:0 0 12px;">Swap Quote Estimator</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
+<div><label>From Token</label>
+<select id="q_tokenIn"><option>ETH</option><option>WBTC</option><option>USDC</option><option>DAI</option></select></div>
+<div><label>To Token</label>
+<select id="q_tokenOut"><option selected>USDC</option><option>ETH</option><option>DAI</option><option>WBTC</option></select></div>
+<div><label>Amount (USD)</label><input id="q_amount" type="number" placeholder="1000"></div>
+<div><button class="primary" style="margin-top:0;" onclick="getSwapQuote()">Get Quote</button></div>
+</div>
+<div id="swapQuoteResult" style="display:none;margin-top:12px;padding:14px;background:#0f172a;border-radius:12px;border:1px solid #1e293b;font-size:14px;"></div>
+</div>
+</div>
+
 </div>
 
 <!-- ===== SECTION: WALLETS ===== -->
@@ -380,7 +399,7 @@ function navigate(section) {
   if(section === "policies")     { loadPoliciesTable(); }
   if(section === "payments")     { loadPaymentsTable(); }
   if(section === "transactions") { loadFullTxTable(); }
-  if(section === "analytics")    { loadAnalytics(); }
+  if(section === "analytics")    { loadAnalytics(); loadTokenPrices(); }
   if(section === "wallets")      { updateWalletPanel(); }
 }
 
@@ -571,6 +590,50 @@ async function generateIntent() {
   const res  = await fetch("/api/payment-intent", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({task})})
   const data = await res.json()
   el.innerText = JSON.stringify(data, null, 2)
+}
+
+// ===== UNISWAP =====
+
+async function loadTokenPrices() {
+  const container = document.getElementById("tokenPrices")
+  container.innerHTML = "<div style='color:#475569;'>Loading live prices...</div>"
+  try {
+    const res  = await fetch("/api/token/prices")
+    const data = await res.json()
+    container.innerHTML = Object.values(data).map(t => {
+      if(t.error) return `<div class="status-card"><div style="font-weight:600;">${t.symbol}</div><div style="color:#475569;font-size:12px;">Unavailable</div></div>`
+      const change = t.change24h ?? 0
+      const color  = change >= 0 ? "#10b981" : "#ef4444"
+      return `<div class="status-card" style="text-align:center;">
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">${t.symbol}</div>
+        <div style="font-size:20px;font-weight:700;">$${t.priceUSD.toLocaleString()}</div>
+        <div style="font-size:12px;color:${color};margin-top:4px;">${change >= 0 ? "+" : ""}${change}% 24h</div>
+      </div>`
+    }).join("")
+  } catch(e) {
+    container.innerHTML = "<div style='color:#475569;'>Could not load prices</div>"
+  }
+}
+
+async function getSwapQuote() {
+  const payload = {
+    tokenIn:   document.getElementById("q_tokenIn").value,
+    tokenOut:  document.getElementById("q_tokenOut").value,
+    amountUSD: document.getElementById("q_amount").value
+  }
+  const res  = await fetch("/api/token/quote", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)})
+  const data = await res.json()
+  const el   = document.getElementById("swapQuoteResult")
+  el.style.display = "block"
+  if(data.error) {
+    el.innerHTML = `<span style="color:#ef4444;">${data.error}</span>`
+  } else {
+    el.innerHTML = `
+      <span style="color:#94a3b8;">Sending</span> <strong>${data.amountIn} ${data.tokenIn}</strong>
+      ($${data.amountUSD}) &rarr;
+      <span style="color:#94a3b8;">Receive</span> <strong>${data.amountOut} ${data.tokenOut}</strong>
+      &nbsp;&nbsp;<span style="color:#64748b;font-size:12px;">via Uniswap v3</span>`
+  }
 }
 
 // ===== INIT =====
