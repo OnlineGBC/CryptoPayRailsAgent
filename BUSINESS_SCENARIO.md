@@ -1,24 +1,34 @@
 # CryptoPayRails Agent — Business Scenario
 
-## Who This Is For
+## Ideal Customer Profile
 
-This platform is not limited to any specific industry or company size.
-Any organization that makes recurring, rule-based payments can benefit:
+The highest-value customer for this platform is a **large global enterprise**
+with the following characteristics:
 
-| Industry | Example Use Case |
+| Signal | Why It Matters |
 |---|---|
-| Technology | SaaS subscriptions, cloud infrastructure, API vendor payments |
-| Manufacturing | Supplier invoices, logistics partners, raw material purchases |
-| Healthcare | Lab vendor payments, contractor reimbursements, insurance settlements |
-| Real Estate | Property management fees, maintenance contractors, utility bills |
-| Retail / E-commerce | Fulfillment partners, marketplace fees, advertising spend |
-| Professional Services | Expert witness fees, subcontractor payments, referral fees |
-| Non-Profit | Grant disbursements within approved program budgets |
-| Government | Vendor payments within procurement rules and fiscal controls |
+| Pays vendors or contractors across multiple countries | Cross-border SWIFT wires cost $35–$75 each and take 1–5 days. USDC on Base costs $0.02 and settles in 2 seconds. At 500 international payments/month the savings are $17,500–$37,500/month in fees alone — plus the time savings. |
+| High invoice volume | Human review of every invoice costs $15–$50 in staff time. At 1,000 invoices/month that is $15,000–$50,000/month in AP labor that automation eliminates for routine transactions. |
+| Regulated industry requiring audit integrity | Blockchain audit trail is immutable and independently verifiable without internal system access — critical for SOX compliance, external audit, and fraud investigation. |
+| Crypto treasury or digital asset strategy | Increasingly common among Fortune 500 companies post-2024. Paying vendors in USDC avoids FX conversion entirely when the treasury already holds stablecoins. |
+| Remote or globally distributed workforce | Contractor in Singapore, vendor in Germany, supplier in Brazil — one payment rail, same cost, same speed, regardless of destination. |
 
-The common thread: **any organization with repetitive payments that follow
-known rules, where the bottleneck is human approval of low-risk routine
-transactions.**
+### Industries With the Strongest Fit
+
+| Industry | Specific Pain Point Solved |
+|---|---|
+| Technology (large enterprise) | Global SaaS vendor payments, remote contractor disbursements |
+| Manufacturing | Cross-border supplier payments, multi-currency invoice settlement |
+| Healthcare | International lab vendor payments, contractor reimbursements across jurisdictions |
+| Real Estate | Cross-border property management, international contractor payments |
+| Retail / E-commerce | Global fulfillment partner settlements, international marketplace fees |
+| Professional Services | Cross-border subcontractor payments, international expert fees |
+| Non-Profit / NGO | Grant disbursements to international programs with full audit trail |
+| Government / Public Sector | Vendor payments within procurement rules, independently auditable |
+
+The common thread: **any large organization making repetitive cross-border
+payments within known rules, where the cost of human approval and
+international wire transfer friction is significant.**
 
 ------------------------------------------------------------------------
 
@@ -147,6 +157,32 @@ The agent flags these for human review:
 | Cost per transaction | $15–$50 in staff time | Near zero for routine payments |
 | Auditability | Requires internal access | Anyone with the contract address can verify |
 | Fraud surface | Any human in the approval chain | Only the policy owner wallet can change rules |
+
+------------------------------------------------------------------------
+
+## Cross-Border Payment Economics
+
+### Traditional wire transfer vs. USDC on Base — $1,000 payment to Singapore
+
+| Method | Sender Fee | Receiver Fee | FX Cost | Settlement Time |
+|---|---|---|---|---|
+| SWIFT wire | $25–$50 | $10–$25 | 1–3% spread | 1–5 business days |
+| PayPal International | 3–5% ($30–$50) | None | 2–4% spread | Minutes to days |
+| **USDC on Base** | **~$0.02** | **None** | **None (stablecoin)** | **~2 seconds** |
+
+At 500 international payments per month, SWIFT costs $17,500–$37,500 in
+fees alone. USDC on Base costs approximately $10. The rest is pure saving.
+
+### Why Base is the right network for enterprise use
+
+| Property | Detail |
+|---|---|
+| Cost per transfer | ~$0.01–$0.05 regardless of amount |
+| Settlement time | ~2 seconds (practical finality) |
+| USDC type | Native — issued directly by Circle, not bridged |
+| Security model | Ethereum L2 — inherits Ethereum's security |
+| Institutional backing | Operated by Coinbase — compliance-friendly |
+| Regulatory clarity | USDC issued under US money transmission licenses |
 
 ------------------------------------------------------------------------
 
