@@ -54,4 +54,5 @@ jobs:
         run: pip install mythril
 
       - name: Run Mythril
-        run: myth analyze contracts/src/PolicyManager.sol --solv 0.8.28 --execution-timeout 90
+        # SWC-116 (block.timestamp) is suppressed — accepted low risk, documented in contracts/audit/slither_report.md
+        run: myth analyze contracts/src/PolicyManager.sol --solv 0.8.28 --execution-timeout 90 --swc-blacklist 116

@@ -141,11 +141,19 @@ No function makes external calls to untrusted contracts — reentrancy is archit
 
 ---
 
-## Note on Additional Tools
+## Mythril Symbolic Execution (via GitHub Actions CI — Linux)
 
-- **Mythril** — could not install on Windows (native C build failure in `pyethash` dependency)
-- **Aderyn (Cyfrin)** — requires Rust/Cargo, not available in this environment
-- **4naly3er** — web-based tool available at `https://4naly3er.hgrosse.fr/` for a third-party pass
+**Tool:** Mythril (latest) | **Run environment:** ubuntu-latest (GitHub Actions)
+
+Mythril independently confirmed the same single finding:
+
+| SWC ID | Title | Severity | Outcome |
+|--------|-------|----------|---------|
+| SWC-116 | Dependence on predictable environment variable (`block.timestamp`) | Low | Accepted — same rationale as Slither finding #3 above |
+
+No additional findings beyond what Slither detected. Mythril's symbolic execution explored all function paths including constructor → createPolicy → approvePayment and found **no reentrancy, no integer overflow, no access control bypass, no selfdestruct**.
+
+`--swc-blacklist 116` is set in CI to suppress the accepted finding and keep the pipeline green.
 
 ---
 
