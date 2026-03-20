@@ -1,4 +1,4 @@
-# Codex PayRails Agent
+# StablePayGuard
 
 ![Python](https://img.shields.io/badge/python-3.10-blue)
 ![Flask](https://img.shields.io/badge/flask-3.x-green)
@@ -14,7 +14,7 @@
 
 Most companies still manage Accounts Payable the same way they did 20 years ago — a human reviews every invoice, approves every payment, and chases down every exception. It's slow, error-prone, and doesn't scale.
 
-**Codex PayRails Agent** replaces that bottleneck with AI agents that handle routine payments automatically — while giving finance and operations teams a real-time control room to set the rules, monitor activity, and stay in control.
+**StablePayGuard** replaces that bottleneck with AI agents that handle routine payments automatically — while giving finance and operations teams a real-time control room to set the rules, monitor activity, and stay in control.
 
 Think of it as a **corporate AP department where AI does the routine work and humans set the guardrails.**
 
@@ -47,7 +47,7 @@ Think of it as a **corporate AP department where AI does the routine work and hu
 
 ## The Business Case
 
-| Traditional AP | Codex PayRails Agent |
+| Traditional AP | StablePayGuard |
 |---|---|
 | Manual invoice approval | AI agents execute within pre-approved policies |
 | Slow payment cycles | Payments execute instantly within policy rules |
@@ -146,7 +146,7 @@ Future production architecture:
 
 # Project Structure
 
-    CodexPayRailsAgent/
+    StablePayGuard/
 
     ├── app.py
     ├── templates/
@@ -271,8 +271,8 @@ Example response:
 
 Clone repository
 
-    git clone https://github.com/yourrepo/codex-payrails-agent.git
-    cd CodexPayRailsAgent
+    git clone https://github.com/yourrepo/stablepayguard.git
+    cd StablePayGuard
 
 Create Python environment
 
@@ -327,11 +327,11 @@ Example Dockerfile
 
 Build container
 
-    docker build -t codex-payrails .
+    docker build -t stablepayguard .
 
 Run container
 
-    docker run -p 5000:5000 codex-payrails
+    docker run -p 5000:5000 stablepayguard
 
 ------------------------------------------------------------------------
 
@@ -466,7 +466,7 @@ Guidelines:
 
 MIT License
 
-Copyright (c) 2026 Codex PayRails
+Copyright (c) 2026 StablePayGuard
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software to deal in the Software without restriction.

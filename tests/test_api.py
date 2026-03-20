@@ -354,4 +354,4 @@ def test_contract_status(client):
 def test_dashboard_page_loads(client):
     res = client.get("/")
     assert res.status_code == 200
-    assert b"Codex PayRails" in res.data
+    assert b"StablePayGuard" in res.data

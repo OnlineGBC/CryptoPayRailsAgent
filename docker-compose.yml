@@ -3,7 +3,7 @@ version: "3.9"
 services:
   db:
     image: postgres:16-alpine
-    container_name: codex-payrails-db
+    container_name: stablepayguard-db
     environment:
       POSTGRES_DB: payrails
       POSTGRES_USER: payrails
@@ -20,7 +20,7 @@ services:
 
   web:
     build: .
-    container_name: codex-payrails-agent
+    container_name: stablepayguard
     ports:
       - "5000:5000"
     env_file:

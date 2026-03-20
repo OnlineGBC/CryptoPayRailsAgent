@@ -1,8 +1,8 @@
-# Codex PayRails Agent Architecture
+# StablePayGuard Architecture
 
 ## Overview
 
-Codex PayRails Agent is a Flask-based control dashboard for AI-managed payment operations. The current implementation is a single-service web application with a dynamic frontend and lightweight API layer.
+StablePayGuard is a Flask-based control dashboard for AI-managed payment operations. The current implementation is a single-service web application with a dynamic frontend and lightweight API layer.
 
 ## Current Architecture
 

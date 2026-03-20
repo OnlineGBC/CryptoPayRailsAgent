@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to Codex PayRails Agent.
+Thank you for your interest in contributing to StablePayGuard.
 
 ## Workflow
 

@@ -1,4 +1,4 @@
-# CryptoPayRails Agent — Business Scenario
+# StablePayGuard — Business Scenario
 
 ------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ This process costs time, money, and introduces human error — for every
 single invoice, including the routine $1,800 AWS bill that has arrived on
 the same date every month for three years.
 
-CryptoPayRails Agent changes the model:
+StablePayGuard changes the model:
 
 > **Humans define the rules once. AI agents execute within those rules
 > continuously. The smart contract enforces the rules autonomously.
@@ -199,9 +199,9 @@ When an invoice arrives from AWS for $1,800:
 
 ------------------------------------------------------------------------
 
-## Traditional AP vs. CryptoPayRails Agent
+## Traditional AP vs. StablePayGuard
 
-| Capability | Traditional AP | CryptoPayRails Agent |
+| Capability | Traditional AP | StablePayGuard |
 |---|---|---|
 | Payment approval | Human reviews every invoice | Smart contract enforces rules automatically |
 | Audit trail | Internal database — can be edited | Immutable blockchain record — cannot be altered |
