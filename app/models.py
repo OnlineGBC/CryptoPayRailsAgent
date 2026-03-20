@@ -62,6 +62,29 @@ class ActivityLog(db.Model):
         }
 
 
+class PaymentIntent(db.Model):
+    __tablename__ = "payment_intents"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    task = db.Column(db.String(500), nullable=False)
+    recipient = db.Column(db.String(100))
+    amount = db.Column(db.Float)
+    purpose = db.Column(db.String(500))
+    mode = db.Column(db.String(20), default="live")
+    error = db.Column(db.String(500))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "task": self.task,
+            "recipient": self.recipient,
+            "amount": self.amount,
+            "purpose": self.purpose,
+            "mode": self.mode,
+            "error": self.error,
+        }
+
+
 class WalletState(db.Model):
     __tablename__ = "wallet_state"
     id = db.Column(db.Integer, primary_key=True)

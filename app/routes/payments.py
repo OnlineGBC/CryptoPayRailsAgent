@@ -4,6 +4,7 @@ from services.agent_service import generate_payment_intent
 from schemas import PaymentIntentRequest
 from utils import login_required, validate_request
 from extensions import limiter
+import store
 
 logger = logging.getLogger(__name__)
 payments_bp = Blueprint("payments", __name__)
@@ -19,4 +20,6 @@ def payment_intent():
         return jsonify(err[0]), err[1]
 
     intent = generate_payment_intent(parsed.task)
+    store.save_intent(parsed.task, intent)
+    logger.info("Payment intent generated and persisted for task: %s", parsed.task[:60])
     return jsonify(intent)

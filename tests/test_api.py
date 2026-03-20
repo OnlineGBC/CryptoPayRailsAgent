@@ -12,6 +12,17 @@ os.environ.setdefault("ADMIN_PASSWORD", "testpass")
 from app import app as flask_app
 from models import db
 
+# Exempt all requests from rate limiting when TESTING=True
+from extensions import limiter
+
+@limiter.request_filter
+def _exempt_in_testing():
+    try:
+        from flask import current_app
+        return current_app.config.get("TESTING", False)
+    except RuntimeError:
+        return False
+
 
 @pytest.fixture(autouse=True)
 def reset_db():
@@ -252,6 +263,31 @@ def test_payment_intent_demo_mode(auth_client):
     assert res.status_code == 200
     data = res.get_json()
     assert "recipient" in data or "error" in data
+
+
+def test_payment_intent_persisted(auth_client):
+    """Generated payment intent should be persisted in the DB."""
+    os.environ.pop("SYNTH_API_KEY", None)
+    os.environ.pop("OPENAI_API_KEY", None)
+    auth_client.post("/api/payment-intent", json={"task": "Pay AWS $200 for hosting"})
+    from models import PaymentIntent
+    with flask_app.app_context():
+        count = PaymentIntent.query.count()
+    assert count == 1
+
+
+def test_policies_list_includes_remaining_budget(auth_client):
+    """Dashboard policies_list should include remainingBudget for each policy."""
+    auth_client.post("/api/policies", json={
+        "agent": "0xAgent", "token": "USDC",
+        "totalBudget": 5000, "perTxLimit": 500, "purpose": "vendor"
+    })
+    data = auth_client.get("/api/dashboard").get_json()
+    assert "policies_list" in data
+    policy = data["policies_list"][0]
+    assert "remainingBudget" in policy
+    assert "spentAmount" in policy
+    assert policy["remainingBudget"] <= policy["budget"]
 
 
 # ---------------------------------------------------------------------------

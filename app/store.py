@@ -80,6 +80,25 @@ def add_activity(action, text):
 
 
 # ---------------------------------------------------------------------------
+# Payment Intents
+# ---------------------------------------------------------------------------
+
+def save_intent(task: str, result: dict):
+    from models import db, PaymentIntent
+    record = PaymentIntent(
+        task=task,
+        recipient=result.get("recipient"),
+        amount=result.get("amount"),
+        purpose=result.get("purpose"),
+        mode=result.get("mode", "live"),
+        error=result.get("error"),
+    )
+    db.session.add(record)
+    db.session.commit()
+    return record.to_dict()
+
+
+# ---------------------------------------------------------------------------
 # Wallet
 # ---------------------------------------------------------------------------
 

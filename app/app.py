@@ -72,6 +72,20 @@ def dashboard_data():
     approved = sum(1 for t in transactions if t["status"] == "Completed")
     approval_rate = round(approved / len(transactions) * 100, 1) if transactions else 96.2
 
+    # Annotate each policy with remainingBudget calculated from DB transactions
+    spent_by_policy = {}
+    for t in transactions:
+        if t["status"] == "Completed" and t["policy"]:
+            spent_by_policy[t["policy"]] = spent_by_policy.get(t["policy"], 0) + t["amount"]
+
+    policies_with_budget = []
+    for p in policies:
+        spent = spent_by_policy.get(p["id"], 0)
+        p_copy = dict(p)
+        p_copy["spentAmount"] = round(spent, 2)
+        p_copy["remainingBudget"] = round(p["budget"] - spent, 2)
+        policies_with_budget.append(p_copy)
+
     return jsonify({
         "kpi": {
             "policies": len(policies),
@@ -82,7 +96,7 @@ def dashboard_data():
         "transactions": transactions[:10],
         "activity": activity,
         "wallet": wallet,
-        "policies_list": policies,
+        "policies_list": policies_with_budget,
     })
 
 # ---------------------------------------------------------------------------
