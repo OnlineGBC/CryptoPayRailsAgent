@@ -4,8 +4,8 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../app"))
 
-# Set test env vars BEFORE importing app so SQLAlchemy uses the test DB
-os.environ.setdefault("DATABASE_URL", "sqlite:///test_payrails.db")
+# Set test env vars BEFORE importing app
+os.environ.setdefault("DATABASE_URL", "postgresql://payrails:payrails@localhost:5432/payrails_test")
 os.environ.setdefault("SECRET_KEY", "test-secret-key")
 os.environ.setdefault("ADMIN_PASSWORD", "testpass")
 
